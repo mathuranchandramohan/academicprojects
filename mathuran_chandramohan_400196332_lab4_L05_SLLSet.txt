@@ -1,0 +1,230 @@
+public class SLLSet {
+    // initialize instance variables
+    private int n;
+    private SLLNode start;
+
+    // CONSTRUCTORS
+    // constructs empty SLLSet
+    public SLLSet(){
+        // set values to instance variables of SLLSet
+        n = 0;
+        start = null;
+    }
+
+    //constructs SLLSet object with integers in input array
+    public SLLSet(int [] sortedArray){
+        // if empty array
+        if(sortedArray.length == 0) {
+            n = 0;
+            start = null;
+            return;
+        }
+
+        else {
+            // initialize variables
+            n = sortedArray.length;
+            start = new SLLNode(sortedArray[0],null);
+            SLLNode nextnode = start;
+
+            // iterates through list
+            for(int i=1 ; i < n; i++){
+                nextnode.next= new SLLNode(sortedArray[i],null);
+                nextnode  = nextnode.next;
+            }
+        }
+    }
+
+    // OTHER METHODS
+    // returns size of set
+    public int getSize(){return n;}
+
+    // returns deep copy of SLLSet
+    public SLLSet copy(){
+        SLLSet copy = this;
+        return  copy;
+    }
+
+    // returns true if integer v is an element of SLLSet
+    // false otherwise
+    public boolean isIn(int v){
+        // initialize variables
+        SLLNode nextnode = start;
+
+        // iterates through linked list
+        for (int i = 0; i < n; i++){
+            // if v is found is list
+            if (nextnode.value == v){
+                return true;
+            }
+            else if (nextnode.value > v){
+                return false;
+            }
+            nextnode = nextnode.next;
+        }
+        return false;
+    }
+
+    // adds integer as element to SllSet
+    public void add(int v){
+        // performs operation IF integer is not in the set
+        if (isIn(v) == true){return;}
+
+        // initialize variables
+        SLLNode nextnode = start;
+
+        // if 'this' list has no elements
+        if(n == 0){
+            n++;
+            nextnode = new SLLNode(v,null);
+            start = nextnode;
+            return;
+        }
+        else {
+            while (nextnode.next != null){
+                if (nextnode.next.value > v){
+                    nextnode.next = new SLLNode(v,nextnode.next);
+                    n++;
+                    return;
+                }
+                nextnode = nextnode.next;
+            }
+            n++;
+            nextnode.next = new SLLNode(v,null);
+        }
+    }
+
+    // removes v from SLLSet
+    public void remove(int v){
+        // performs operation if v is in SLLSet
+        if (this.isIn(v) == false){return;}
+
+        // initialize variables
+        SLLNode nextnode = start;
+
+        // first element is v
+        if (nextnode.value == v){
+            start = nextnode.next;
+            n--;
+            return;
+        }
+
+        // iterates through list and finds v
+        while (nextnode.next != null){
+            if (nextnode.next.value == v){
+                nextnode.next = nextnode.next.next;
+                n--;
+                return;
+            }
+
+            nextnode = nextnode.next;
+        }
+    }
+
+    // returns new SLLSet with represents the union of
+    // 2 SLLSet objects
+    //add two lists together, keeping them in order and getting rid of overlapping
+    public SLLSet union(SLLSet s) {
+        // initialize variables
+        SLLSet out = s.copy();
+        SLLNode nextnode = start;
+
+        if(s.start == null){
+            SLLSet temp = this.copy();
+            return temp;
+        }
+        else if(start == null){
+            SLLSet temp = s.copy();
+            return temp;
+        }
+        // valid lists
+        else{
+            for(int i=0; i < n; i++){
+                if(s.isIn(nextnode.value) == false){
+                    out.add(nextnode.value);
+                }
+                nextnode = nextnode.next;
+            }
+        }
+
+        return out;
+    }
+
+    // returns SLLSet list, representing intersection of two lists
+    public SLLSet intersection(SLLSet s) {
+        // initialize variables
+        SLLSet compare = difference(s);
+        SLLNode nextnode = start;
+
+        SLLSet out = new SLLSet ();
+
+        // performs operation IF both lists are not empty
+        if (s.start == null || this.start == null){return out;}
+
+        // iterates through SLLSet
+        for (int i = 0; i < (n - compare.getSize()); i++){
+            if (compare.isIn(nextnode.value) == false){
+                out.add(nextnode.value);
+            }
+
+            nextnode = nextnode.next;
+        }
+
+        return out;
+    }
+
+    // returns SLLSet representing the difference between the two lists
+    public SLLSet difference(SLLSet s){
+        // initialize variables
+        SLLSet out = new SLLSet();
+
+        // SLLSet 'start' is empty
+        if (this.start == null){return out;}
+
+        // SLLSet 'this' is empty
+        else if (s.start == null){
+            out = this.copy();
+            return out;
+        }
+        else{
+            // initialize variables
+            SLLNode nextnode = start;
+
+            // iterates through set
+            while (nextnode != null){
+                if(s.isIn(nextnode.value) == false){
+                    out.add(nextnode.value);
+                }
+                nextnode = nextnode.next;
+            }
+
+            return out;
+        }
+    }
+
+    public static SLLSet union(SLLSet[] sArray){
+        //initialize variable
+        SLLSet out = sArray[0];
+
+        // iterates through array of SLLSet type
+        for(int i = 1; i < sArray.length; i++){
+            out = out.union(sArray[i]);
+        }
+
+        return out;
+    }
+
+    public String toString() {
+        String out = "";
+        SLLNode nextnode = start;
+
+        while (nextnode != null){
+            out += nextnode.value;
+            if (nextnode.next != null){
+                out += ", ";
+            }
+
+            nextnode = nextnode.next;
+        }
+        return out;
+    }
+}

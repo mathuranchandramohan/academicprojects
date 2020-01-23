@@ -1,0 +1,12 @@
+public class SLLNode {
+    // initialize instance variables
+    int value;
+    SLLNode next;
+
+    // CONSTRUCTOR
+    // assigns values to SLLNode object
+    public SLLNode(int i, SLLNode n){
+        value = i; // value of current node
+        next = n; // address of next node
+    }
+}
